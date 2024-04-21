@@ -1,9 +1,10 @@
 <script setup>
-
+import TheHeader from "@/components/TheHeader.vue";
+import HomeView from "@/pages/HomeView.vue";
 </script>
 <template>
-<h1>TEST</h1>
+  <TheHeader></TheHeader>
+  <!-- <HomeView></HomeView> -->
+  <RouterView />
 </template>
-<style>
-
-</style>
+<style></style>
