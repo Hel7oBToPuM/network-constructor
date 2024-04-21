@@ -12,22 +12,22 @@ table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+time, mark, audio, video, button, img {
     margin: 0;
     padding: 0;
-    border: 0;
+    padding-block: 0;
+    padding-inline: 0;
+    border: none;
     font-size: 100%;
     vertical-align: baseline;
+    background: none;
 }
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
 body {
-    height: 100vh;
-    width: 100vw;
     line-height: 1;
-    font-family: 'Montserrat', sans-serif;
 }
 ol, ul {
     list-style: none;
