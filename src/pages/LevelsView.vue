@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {nextTick, ref} from "vue";
 import Level from "@/components/LevelsItem.vue";
 
 const padding = 8
@@ -11,17 +11,17 @@ const levels = ref(
     {
       "Прикладной уровень": {
         color: "#efc3e6",
-        description: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         protocols: ["HTTP"]
       },
       "Уровень представления": {
         color: "#f1b5d9",
-        description: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         protocols: []
       },
       "Сеансовый уровень": {
         color: "#f0a6cb",
-        description: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         protocols: []
       },
       "Транспортный уровень": {
@@ -35,38 +35,53 @@ const levels = ref(
       },
       "Сетевой уровень": {
         color: "#9e80a6",
-        description: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         protocols: ["IP"]
       },
       "Канальный уровень": {
         color: "#75678a",
-        description: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         protocols: ["Ethernet", "MAC"]
       },
       "Физический уровень": {
         color: "#4e445c",
-        description: "Lorem Ipsum",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         protocols: []
       },
     }
 )
 
 const activeButtonIndex = ref(null);
+const levelRefs = ref([]);
+
+const handleClick = (index) => {
+  const newIndex = index !== activeButtonIndex.value ? index : null;
+  activeButtonIndex.value = newIndex;
+
+  nextTick(() => {
+    if (newIndex !== null) {
+      const element = levelRefs.value[newIndex];
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+};
+
 </script>
 
 <template>
-  <main :style="{padding: `${padding}vh 0`}">
+  <main :style="{padding: `${padding}vh`, height: `${height}vh`}">
     <ul :style="{gap: `${gap}vh`}" class="levels">
       <Level
           v-for="(props, title, index) in levels"
           :key="index"
-          :class-level="`level-${index}`"
+          :index="index"
           :color="props.color"
-          :btn-height="(height - gap*(Object.keys(levels).length - 1))/Object.keys(levels).length"
+          :btn-height="(height - gap * (Object.keys(levels).length - 1)) / Object.keys(levels).length"
           :width="lastElementWidth - (lastElementWidth / 15) * (Object.keys(levels).length - 1 - index)"
           :active-width="lastElementWidth"
           :is-active="activeButtonIndex === index"
-          @clicked="activeButtonIndex = (index !== activeButtonIndex ? index : null)"
+          @register-ref="(el, _index) => { levelRefs[_index] = el.value }"
+          @clicked="handleClick(index)"
       >
         <template #title>{{ title }}</template>
         <template #description>{{ props.description }}</template>
@@ -78,10 +93,10 @@ const activeButtonIndex = ref(null);
 <style scoped>
 main {
   background-color: #f5f5f5;
+  overflow: auto;
 }
 
 .levels {
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
