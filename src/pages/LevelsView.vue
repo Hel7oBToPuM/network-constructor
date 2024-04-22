@@ -96,6 +96,10 @@ main {
   overflow: auto;
 }
 
+::-webkit-scrollbar {
+  width: 0;
+}
+
 .levels {
   display: flex;
   flex-direction: column;
