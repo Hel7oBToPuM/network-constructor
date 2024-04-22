@@ -1,11 +1,11 @@
 <script setup>
 import {ref} from "vue";
-import LevelsItem from "@/components/LevelsItem.vue";
+import Level from "@/components/LevelsItem.vue";
 
 const padding = 8
 const height = 100 - 2 * padding - 12
 const gap = 2
-const lastElementWidth = 58
+const lastElementWidth = 50
 
 const levels = ref(
     {
@@ -26,7 +26,11 @@ const levels = ref(
       },
       "Транспортный уровень": {
         color: "#c697c1",
-        description: "Lorem Ipsum",
+        description: `Транспортный уровень, или уровень 4 модели OSI, управляет сетевым трафиком между хостами и \
+         конечными системами, гарантируя полный поток данных. Объем, назначение и скорость передачи данных \
+         контролируются протоколами транспортного уровня. Пакеты данных должны быть получены и отправлены на \
+         соответствующую машину сетевым уровнем. После этого транспортный уровень принимает пакеты, сортирует их и \
+         ищет ошибки. Затем он направляет их на сеансовый уровень соответствующей компьютерной программы.`,
         protocols: ["TCP", "UDP", "SCTP"]
       },
       "Сетевой уровень": {
@@ -46,20 +50,27 @@ const levels = ref(
       },
     }
 )
+
+const activeButtonIndex = ref(null);
 </script>
 
 <template>
   <main :style="{padding: `${padding}vh 0`}">
     <ul :style="{gap: `${gap}vh`}" class="levels">
-      <LevelsItem
+      <Level
           v-for="(props, title, index) in levels"
           :key="index"
-          :class-level="'level-' + index"
+          :class-level="`level-${index}`"
           :color="props.color"
-          :button-height="(height - 2*(Object.keys(levels).length - 1))/Object.keys(levels).length"
+          :btn-height="(height - gap*(Object.keys(levels).length - 1))/Object.keys(levels).length"
+          :width="lastElementWidth - (lastElementWidth / 15) * (Object.keys(levels).length - 1 - index)"
+          :active-width="lastElementWidth"
+          :is-active="activeButtonIndex === index"
+          @clicked="activeButtonIndex = (index !== activeButtonIndex ? index : null)"
       >
-        {{ title }}
-      </LevelsItem>
+        <template #title>{{ title }}</template>
+        <template #description>{{ props.description }}</template>
+      </Level>
     </ul>
   </main>
 </template>
