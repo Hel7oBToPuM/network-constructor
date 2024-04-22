@@ -19,8 +19,8 @@ header {
   align-items: center;
   background: linear-gradient(
       90deg,
-      rgba(242, 194, 237, 0.8) 0%,
-      rgba(238, 225, 237, 0.8) 100%
+      rgba(242, 194, 237, 1) 0%,
+      rgba(238, 225, 237, 1) 100%
   );
 }
 </style>

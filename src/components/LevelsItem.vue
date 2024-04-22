@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from "vue";
 const show = ref(false);
-defineProps(["classLevel"]);
+const props = defineProps(["classLevel", "color", "buttonHeight"]);
 </script>
 
 <template>
-  <li>
-    <button :class="{ [classLevel]: true, active: show }" @click="show = !show">
+  <li :class="{[classLevel]: true, active: show }" >
+    <button :style="{backgroundColor: `${color}d0`, height: `${buttonHeight}vh`}" @click="show = !show">
       <slot></slot>
     </button>
     <Transition>
@@ -16,13 +16,17 @@ defineProps(["classLevel"]);
 </template>
 
 <style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
+li {
+  display: flex;
+  flex-direction: column;
 }
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
+button {
+  line-height: 1;
+  font-size: 1.5vw;
+  font-family: 'Montserrat', sans-serif;
+  text-transform: uppercase;
+}
+.active {
+    width: 58%;
 }
 </style>

@@ -1,72 +1,78 @@
 <script setup>
-import { ref } from "vue";
+import {ref} from "vue";
 import LevelsItem from "@/components/LevelsItem.vue";
-const listLevels = ref([
-  "Прикладной уровень",
-  "Уровень представления",
-  "Сеансовый уровень",
-  "Транспортный уровень",
-  "Сетевой уровень",
-  "Канальный уровень",
-  "Физический уровень",
-]);
+
+const padding = 8
+const height = 100 - 2 * padding - 12
+const gap = 2
+const lastElementWidth = 58
+
+const levels = ref(
+    {
+      "Прикладной уровень": {
+        color: "#efc3e6",
+        description: "Lorem Ipsum",
+        protocols: ["HTTP"]
+      },
+      "Уровень представления": {
+        color: "#f1b5d9",
+        description: "Lorem Ipsum",
+        protocols: []
+      },
+      "Сеансовый уровень": {
+        color: "#f0a6cb",
+        description: "Lorem Ipsum",
+        protocols: []
+      },
+      "Транспортный уровень": {
+        color: "#c697c1",
+        description: "Lorem Ipsum",
+        protocols: ["TCP", "UDP", "SCTP"]
+      },
+      "Сетевой уровень": {
+        color: "#9e80a6",
+        description: "Lorem Ipsum",
+        protocols: ["IP"]
+      },
+      "Канальный уровень": {
+        color: "#75678a",
+        description: "Lorem Ipsum",
+        protocols: ["Ethernet", "MAC"]
+      },
+      "Физический уровень": {
+        color: "#4e445c",
+        description: "Lorem Ipsum",
+        protocols: []
+      },
+    }
+)
 </script>
 
 <template>
-  <ul class="levels">
-    <LevelsItem
-      v-for="(title, index) in listLevels"
-      :key="index"
-      :class-level="'level-' + index"
-    >
-      {{ title }}
-    </LevelsItem>
-  </ul>
+  <main :style="{padding: `${padding}vh 0`}">
+    <ul :style="{gap: `${gap}vh`}" class="levels">
+      <LevelsItem
+          v-for="(props, title, index) in levels"
+          :key="index"
+          :class-level="'level-' + index"
+          :color="props.color"
+          :button-height="(height - 2*(Object.keys(levels).length - 1))/Object.keys(levels).length"
+      >
+        {{ title }}
+      </LevelsItem>
+    </ul>
+  </main>
 </template>
 
-<style>
-.levels {
-  padding-top: 20px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+<style scoped>
+main {
   background-color: #f5f5f5;
 }
-[class^="level-"] {
-  text-wrap: nowrap;
-  padding: 20px 0;
-}
-.level-0 {
-  background-color: #efc3e6e6;
-  width: 300px;
-}
-.level-1 {
-  background-color: #f1b5d9e6;
-  width: 350px;
-}
-.level-2 {
-  background-color: #f0a6cbe6;
-  width: 400px;
-}
-.level-3 {
-  background-color: #c697c1e6;
-  width: 450px;
-}
-.level-4 {
-  background-color: #9e80a6e6;
-  width: 500px;
-}
-.level-5 {
-  background-color: #75678ae6;
-  width: 550px;
-}
-.level-6 {
-  background-color: #4e445ce6;
-  width: 600px;
-}
-.active {
-  width: 600px;
+
+.levels {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
