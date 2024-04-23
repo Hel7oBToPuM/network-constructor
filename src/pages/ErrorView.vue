@@ -1,80 +1,49 @@
-<script setup>
-setTimeout(() => {
-  window.location.href = "https://youtu.be/dQw4w9WgXcQ?si=guRIpafTke4NckY9&t=6";
-}, 6000);
-</script>
+<script setup></script>
 
 <template>
-  <div class="center">
-    <div class="group">
-      <h1>404</h1>
-      <h2>СТРАНИЦА НЕ НАЙДЕНА</h2>
-    </div>
-    <img class="nyan" src="/gif/nyanCat.gif" />
-    <img class="nyan-reverse" src="/gif/nyanCat.gif" />
-    <div class="gif">
-      <img src="/gif/countDown.gif" />
-      <div class="black"></div>
-    </div>
-  </div>
+  <main>
+    <img class="nyan" src="/gif/nyanCat.gif" alt="Нян-кэт"/>
+      <div>
+        <h1>404</h1>
+        <p>Страница не найдена</p>
+      </div>
+    <img class="nyan-reverse" src="/gif/nyanCat.gif" alt="Нян-кэт"/>
+  </main>
 </template>
 
 <style scoped>
-.center {
-  gap: 4vw;
-  width: 100vw;
-  height: calc(100vh - 12vh);
+main {
+  height: calc(100% - 12%);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  position: relative;
+  gap: 9%
 }
-.group {
+
+div {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2vh;
+  justify-content: center;
 }
-[class^="nyan"] {
-  position: absolute;
+
+img {
   width: 20vw;
   height: 20vw;
 }
-.nyan {
-  left: 10vw;
-}
+
 .nyan-reverse {
-  right: 10vw;
   transform: scale(-1, 1);
 }
-.gif {
-  position: absolute;
-  display: flex;
-  bottom: 1vw;
-}
-.black {
-  z-index: -1;
-  position: absolute;
-  left: 1vw;
-  top: 1vw;
-  width: 5vw;
-  height: 5vw;
-  border-radius: 50%;
-  background-color: black;
-}
-img {
-  width: 7vw;
-  height: 7vw;
-}
+
 h1 {
-  display: flex;
-  justify-content: baseline;
-  gap: 10px;
   font-size: 10vw;
 }
-h2 {
+
+p {
   font-size: 2vw;
-  font-weight: 400;
+  text-transform: uppercase;
 }
 </style>

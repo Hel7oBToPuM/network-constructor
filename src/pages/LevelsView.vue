@@ -61,7 +61,7 @@ const handleClick = (index) => {
   nextTick(() => {
     if (newIndex !== null) {
       const element = levelRefs.value[newIndex];
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({behavior: 'smooth', block: 'center'});
     }
   });
 };
@@ -71,18 +71,16 @@ const handleClick = (index) => {
 <template>
   <main :style="{padding: `${padding}vh`, height: `${height}vh`}">
     <ul :style="{gap: `${gap}vh`}" class="levels">
-      <Level
-          v-for="(props, title, index) in levels"
-          :key="index"
-          :index="index"
-          :color="props.color"
-          :btn-height="(height - gap * (Object.keys(levels).length - 1)) / Object.keys(levels).length"
-          :width="lastElementWidth - (lastElementWidth / 15) * (Object.keys(levels).length - 1 - index)"
-          :active-width="lastElementWidth"
-          :is-active="activeButtonIndex === index"
-          @register-ref="(el, _index) => { levelRefs[_index] = el.value }"
-          @clicked="handleClick(index)"
-      >
+      <Level v-for="(props, title, index) in levels"
+             :key="index"
+             :index="index"
+             :color="props.color"
+             :btn-height="(height - gap * (Object.keys(levels).length - 1)) / Object.keys(levels).length"
+             :width="lastElementWidth - (lastElementWidth / 15) * (Object.keys(levels).length - 1 - index)"
+             :active-width="lastElementWidth"
+             :is-active="activeButtonIndex === index"
+             @register-ref="(el, i) => { levelRefs[i] = el.value }"
+             @clicked="handleClick(index)">
         <template #title>{{ title }}</template>
         <template #description>{{ props.description }}</template>
       </Level>

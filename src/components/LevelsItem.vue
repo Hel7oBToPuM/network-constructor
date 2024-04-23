@@ -4,35 +4,37 @@ import {ref, onMounted, computed} from "vue";
 const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "index"]);
 const emit = defineEmits(["register-ref", "clicked"]);
 
-const liRef = ref(null);
-
-onMounted(() => {
-  emit('register-ref', liRef, props.index);
-});
-
 const liStyle = computed(() => {
   return {
     width: `${props.isActive ? props.activeWidth : props.width}%`,
-    transition: props.isActive ? 'width 1s ease-out' : 'width 1s ease-out 1s'
+    transition: `width ${props.isActive ? '1s ease-out' : '1s ease-out 1s'}`
   };
 });
-
-
 const divStyle = computed(() => {
   return {
     backgroundColor: `${props.color}51`,
     maxHeight: props.isActive ? '50vh' : '0',
-    transition: props.isActive ? 'max-height 1.5s ease-out 1s' : 'max-height 1s ease-out '
+    transition: `max-height ${props.isActive ? '1.5s ease-out 1s' : '1s ease-out'}`
   };
 });
+const btnStyle = computed(() => {
+  return {
+    backgroundColor: `${props.color}d0`,
+    height: `${props.btnHeight}vh`
+  }
+})
+
+const liRef = ref(null);
+onMounted(() => {
+  emit('register-ref', liRef, props.index);
+});
+
 
 </script>
 
 <template>
-  <li ref="liRef" :style="liStyle" :class="{[`level-${index}`]: true}">
-    <button
-        :style="{backgroundColor: `${color}d0`, height: `${btnHeight}vh`}"
-        @click="$emit('clicked')">
+  <li ref="liRef" :style="liStyle">
+    <button :style="btnStyle" @click="$emit('clicked')">
       <slot name="title"></slot>
     </button>
     <div :style="divStyle">
@@ -42,7 +44,6 @@ const divStyle = computed(() => {
 </template>
 
 <style scoped>
-
 li {
   display: flex;
   flex-direction: column;

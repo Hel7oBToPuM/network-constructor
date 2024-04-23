@@ -17,11 +17,9 @@ defineProps(["show"]);
   line-height: 0;
   transition: filter 0.3s ease;
 }
-
 .info:focus {
   outline: none;
 }
-
 .info:hover {
   filter: opacity(55%);
   cursor: pointer;
