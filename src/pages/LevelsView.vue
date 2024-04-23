@@ -75,6 +75,7 @@ const handleClick = (index) => {
              :key="index"
              :index="index"
              :color="props.color"
+             :protocols="props.protocols"
              :btn-height="(height - gap * (Object.keys(levels).length - 1)) / Object.keys(levels).length"
              :width="lastElementWidth - (lastElementWidth / 15) * (Object.keys(levels).length - 1 - index)"
              :active-width="lastElementWidth"

@@ -1,25 +1,26 @@
 <script setup>
 import {ref, onMounted, computed} from "vue";
 
-const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "index"]);
+const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "index", "protocols"]);
 const emit = defineEmits(["register-ref", "clicked"]);
+
+const isButtonHover = ref(false);
 
 const liStyle = computed(() => {
   return {
-    width: `${props.isActive ? props.activeWidth : props.width}%`,
-    transition: `width ${props.isActive ? '1s ease-out' : '1s ease-out 1s'}`
+    width: `${isButtonHover.value || props.isActive ? props.activeWidth : props.width}%`,
   };
 });
 const divStyle = computed(() => {
   return {
-    backgroundColor: `${props.color}51`,
+    backgroundColor: `${props.color}81`,
     maxHeight: props.isActive ? '50vh' : '0',
-    transition: `max-height ${props.isActive ? '1.5s ease-out 1s' : '1s ease-out'}`
+    transition: `max-height ${props.isActive ? '1s ease-out 0.4s' : '0.4s ease-out'}`
   };
 });
 const btnStyle = computed(() => {
   return {
-    backgroundColor: `${props.color}d0`,
+    backgroundColor: `${props.color}ED`,
     height: `${props.btnHeight}vh`
   }
 })
@@ -34,11 +35,19 @@ onMounted(() => {
 
 <template>
   <li ref="liRef" :style="liStyle">
-    <button :style="btnStyle" @click="$emit('clicked')">
+    <button :style="btnStyle"
+            @click="$emit('clicked')"
+            @mouseenter="isButtonHover = true"
+            @mouseleave="isButtonHover = false">
       <slot name="title"></slot>
     </button>
-    <div :style="divStyle">
+    <div class="container" :style="divStyle">
       <p><slot name="description"></slot></p>
+      <div class="btn-container">
+        <button class="protocol" v-for="(item, index) in protocols" :key="index">
+          {{item}}
+        </button>
+      </div>
     </div>
   </li>
 </template>
@@ -47,6 +56,7 @@ onMounted(() => {
 li {
   display: flex;
   flex-direction: column;
+  transition: width 0.4s ease-in-out;
 }
 
 button {
@@ -59,7 +69,7 @@ button:hover {
   cursor: pointer;
 }
 
-div {
+.container {
   overflow: hidden;
   border-radius: 0 0 0.3vw 0.3vw;
 }
@@ -69,5 +79,19 @@ p {
   font-size: 1.4vw;
   line-height: 1.2;
   text-align: justify;
+}
+
+.btn-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  padding-bottom: 2%;
+}
+
+.protocol {
+  background-color: white;
+  padding: 1.5%;
+  border-radius: 0.5vw;
+  text-transform: capitalize;
 }
 </style>
