@@ -61,11 +61,10 @@ const handleClick = (index) => {
   nextTick(() => {
     if (newIndex !== null) {
       const element = levelRefs.value[newIndex];
-      element.scrollIntoView({behavior: 'smooth', block: 'center'});
+      element.scrollIntoView({behavior: 'smooth', block: 'start'});
     }
   });
 };
-
 </script>
 
 <template>
@@ -80,7 +79,7 @@ const handleClick = (index) => {
              :width="lastElementWidth - (lastElementWidth / 15) * (Object.keys(levels).length - 1 - index)"
              :active-width="lastElementWidth"
              :is-active="activeButtonIndex === index"
-             @register-ref="(el, i) => { levelRefs[i] = el.value }"
+             @register-ref="(el, i) => { levelRefs[i] = el}"
              @clicked="handleClick(index)">
         <template #title>{{ title }}</template>
         <template #description>{{ props.description }}</template>

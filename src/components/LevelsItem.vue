@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, computed} from "vue";
+import {ref, computed} from "vue";
 
 const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "index", "protocols"]);
 const emit = defineEmits(["register-ref", "clicked"]);
@@ -21,34 +21,22 @@ const divStyle = computed(() => {
 const btnStyle = computed(() => {
   return {
     backgroundColor: `${props.color}ED`,
-    height: `${props.btnHeight}vh`
+    height: `${props.btnHeight}vh`,
+    borderRadius: props.isActive ? "0.3vw 0.3vw 0 0" : "0.3vw",
+    transition: `border-radius 0s ease-in-out ${props.isActive ? "0s" : "0.4s"}`
   }
 })
-const svgStyle = computed(() => {
-  return {
-    transform: props.isActive ? "translateX(0%)" : "translateX(-100%)"
-  }
-})
-
-const liRef = ref(null);
-onMounted(() => {
-  emit('register-ref', liRef, props.index);
-});
-
 
 </script>
 
 <template>
-  <li ref="liRef" :style="liStyle">
-    <button :style="btnStyle"
-            @click="$emit('clicked')"
-            @mouseenter="isButtonHover = true"
-            @mouseleave="isButtonHover = false">
-      <slot name="title"></slot>
-    </button>
-    <svg class="flag" :style="svgStyle" :height="`${btnHeight}vh`" viewBox="0 0 68 85.4" :fill="`${props.color}ED`" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 0  H68  L30 43  L68 86  H0  V0Z"/>
-    </svg>
+  <li :ref="(el) => {emit('register-ref', el, props.index);}" :style="liStyle">
+      <button :style="btnStyle"
+              @click="$emit('clicked')"
+              @mouseenter="isButtonHover = true"
+              @mouseleave="isButtonHover = false">
+        <slot name="title"></slot>
+      </button>
     <div class="container" :style="divStyle">
       <p><slot name="description"></slot></p>
       <div class="btn-container">
@@ -102,11 +90,5 @@ p {
   background-color: white;
   border-radius: 0.5vw;
   text-transform: capitalize;
-}
-
-.flag {
-  position: absolute;
-  left: 100%;
-  transition: transform 0.5s ease-in-out;
 }
 </style>
