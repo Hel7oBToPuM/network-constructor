@@ -7,7 +7,7 @@ import LevelsView from '@/pages/LevelsView.vue';
 import ErrorView from '@/pages/ErrorView.vue' 
 
 const routes = [
-  { path: "/", component: LevelsView, alias: '/home'},
+  { path: "/", component: LevelsView},
   { path: '/404', component: ErrorView },
   { path: '/:catchAll(.*)', redirect: '/404'},
 ];

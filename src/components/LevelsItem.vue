@@ -15,13 +15,18 @@ const divStyle = computed(() => {
   return {
     backgroundColor: `${props.color}81`,
     maxHeight: props.isActive ? '50vh' : '0',
-    transition: `max-height ${props.isActive ? '1s ease-out 0.4s' : '0.4s ease-out'}`
+    transition: `max-height ${props.isActive ? 'ease-in-out 0.4s' : '0.4s ease-in-out'}`
   };
 });
 const btnStyle = computed(() => {
   return {
     backgroundColor: `${props.color}ED`,
     height: `${props.btnHeight}vh`
+  }
+})
+const svgStyle = computed(() => {
+  return {
+    transform: props.isActive ? "translateX(0%)" : "translateX(-100%)"
   }
 })
 
@@ -41,6 +46,9 @@ onMounted(() => {
             @mouseleave="isButtonHover = false">
       <slot name="title"></slot>
     </button>
+    <svg class="flag" :style="svgStyle" :height="`${btnHeight}vh`" viewBox="0 0 68 85.4" :fill="`${props.color}ED`" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0  H68  L30 43  L68 86  H0  V0Z"/>
+    </svg>
     <div class="container" :style="divStyle">
       <p><slot name="description"></slot></p>
       <div class="btn-container">
@@ -54,6 +62,7 @@ onMounted(() => {
 
 <style scoped>
 li {
+  position: relative;
   display: flex;
   flex-direction: column;
   transition: width 0.4s ease-in-out;
@@ -89,9 +98,15 @@ p {
 }
 
 .protocol {
-  background-color: white;
   padding: 1.5%;
+  background-color: white;
   border-radius: 0.5vw;
   text-transform: capitalize;
+}
+
+.flag {
+  position: absolute;
+  left: 100%;
+  transition: transform 0.5s ease-in-out;
 }
 </style>
