@@ -1,8 +1,7 @@
 <script setup>
 import {ref, computed} from "vue";
 
-const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "index", "protocols"]);
-const emit = defineEmits(["register-ref", "clicked"]);
+const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "protocols"]);
 
 const isButtonHover = ref(false);
 
@@ -30,7 +29,7 @@ const btnStyle = computed(() => {
 </script>
 
 <template>
-  <li :ref="(el) => {emit('register-ref', el, props.index);}" :style="liStyle">
+  <li :style="liStyle">
       <button :style="btnStyle"
               @click="$emit('clicked')"
               @mouseenter="isButtonHover = true"
@@ -82,7 +81,7 @@ p {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  padding-bottom: 2%;
+  padding-bottom: 1vh;
 }
 
 .protocol {
