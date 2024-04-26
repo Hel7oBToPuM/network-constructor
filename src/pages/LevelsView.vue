@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import Level from "@/components/LevelsItem.vue";
-import LevelsData from '@/data/json/OSI.json';
+import LevelsData from '@/assets/json/OSI.json';
 
 const padding = 8
 const height = 100 - 2 * padding - 12

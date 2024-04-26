@@ -1,5 +1,5 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import './assets/main.css'
+import './assets/css/main.css'
 
 
 import LevelsView from '@/pages/LevelsView.vue';
