@@ -1,7 +1,11 @@
 <script setup>
 import {ref, computed} from "vue";
+import {useRoute, useRouter} from "vue-router";
 
-const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "protocols"]);
+const props = defineProps([ "color", "btnHeight", "width", "activeWidth", "isActive", "materials"]);
+
+const current_route = useRoute();
+const router = useRouter();
 
 const isButtonHover = ref(false);
 
@@ -39,8 +43,10 @@ const btnStyle = computed(() => {
     <div class="container" :style="divStyle">
       <p><slot name="description"></slot></p>
       <div class="btn-container">
-        <button class="protocol" v-for="(item, index) in protocols" :key="index">
-          {{item}}
+        <button class="protocol" v-for="(url, title, index) in materials"
+                :key="index"
+                @click="router.push(`${current_route.path}/${url}`)">
+          {{title}}
         </button>
       </div>
     </div>
@@ -81,7 +87,7 @@ p {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  padding-bottom: 1vh;
+  padding-bottom: 2vh;
 }
 
 .protocol {
@@ -89,5 +95,10 @@ p {
   background-color: white;
   border-radius: 0.5vw;
   text-transform: capitalize;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.protocol:hover {
+  opacity: 80%;
 }
 </style>
