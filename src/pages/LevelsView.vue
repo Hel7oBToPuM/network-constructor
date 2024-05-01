@@ -35,7 +35,7 @@ watch(activeButtonIndex, (newValue) => {
 </script>
 
 <template>
-  <main ref='mainRef' :style="{padding: `${padding}vh`, height: `${height}vh`}">
+  <main ref="mainRef" :style="{padding: `${padding}vh`, height: `${height}vh`}">
     <ul :style="{gap: `${gap}vh`}" class="levels">
       <Level v-for="(level, index) in levels"
              :key="index"

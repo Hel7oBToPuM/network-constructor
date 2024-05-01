@@ -1,0 +1,12 @@
+[
+  {
+    "type": "computer",
+    "title": "Компьютер",
+    "img": "/png/computer.png"
+  },
+  {
+    "type": "router",
+    "title": "Роутер",
+    "img": "/png/router.png"
+  }
+]
