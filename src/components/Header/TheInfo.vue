@@ -7,19 +7,19 @@ const infoClicked = ref(false)
 </script>
 
 <template>
-  <button class="info" v-if="show === true" @click="infoClicked = !infoClicked">
-    <img src="/png/info.png" alt="Информация"/>
+  <button v-if="show === true" class="info" @click="infoClicked = !infoClicked">
+    <img src="/png/info.png" alt="Информация" @dragstart.prevent />
   </button>
   <h1 class="info" v-else>{{ show }}</h1>
   <Teleport to="body">
     <Transition name="popup">
-      <div v-show="infoClicked" class="popup-bg" @click="infoClicked = false;">
+      <div v-show="infoClicked" class="popup-bg" @click="infoClicked = false">
         <div class="popup" @click.stop>
-          <p class="popup-title" >Информация</p>
+          <p class="popup-title">Информация</p>
           <div class="popup-description">Веб-приложение разработано для дисциплины "Сети и телекомуникации ЭВМ" на кафедры 316 МАИ бывшим студентом этой кафедры под псевдонимом Pumblu. Цель приложения – дать студентам возможность лучше освоить данную дисциплину.</div>
           <div class="popup-btn-container">
             <a class="href-github" href="https://github.com/Hel7oBToPuM">
-              <img src="/svg/Github.svg" alt="Гитхаб" />
+              <img src="/svg/Github.svg" alt="Гитхаб"/>
             </a>
           </div>
         </div>

@@ -7,23 +7,23 @@ import Level from "@/components/LevelsItem.vue";
 import LevelsData from '@/assets/json/OSI.json';
 
 
-const padding = 8
-const height = 100 - 2 * padding - 12
-const gap = 2
-const lastElementWidth = 50
+const padding = 8;
+const height = 100 - 2 * padding - 12;
+const gap = 2;
+const lastElementWidth = 50;
 
-const props = defineProps(["url"]);
+defineProps(["url"]);
 
 const router = useRouter();
 
-const levels = ref(LevelsData)
+const levels = ref(LevelsData);
 const activeButtonIndex = ref(null);
 const mainRef = ref(null);
 
 const handleClick = (index, url) => {
   activeButtonIndex.value = index !== activeButtonIndex.value ? index : null;
   router.push(activeButtonIndex.value !== null ? url : "/")
-};
+}
 
 watch(activeButtonIndex, (newValue) => {
   if (newValue !== null) {

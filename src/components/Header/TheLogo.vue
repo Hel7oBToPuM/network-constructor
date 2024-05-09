@@ -2,7 +2,7 @@
 
 <template>
   <RouterLink class="logo" to="/">
-    <img src="/png/logo.png" alt="Логотип"/>
+    <img src="/png/logo.png" alt="Логотип" @dragstart.prevent/>
     <div>Network Constructor</div>
   </RouterLink>
 </template>
