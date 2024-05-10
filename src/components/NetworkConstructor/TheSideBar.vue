@@ -1,45 +1,50 @@
 <script setup>
 import components from '@/assets/json/NetworkComponents.json';
 import {useVueFlow} from "@vue-flow/core";
-import {ref, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 
-const currentNodeEditingMode = defineModel();
+const currentMode = defineModel();
 
 const { updateNodeData, findNode, findEdge } = useVueFlow();
-const currentNodeType = ref("");
+const currentObject = reactive({
+  value: {},
+  type: "",
+  mode: "",
+});
 
 function handleDragStart(event, nodeType) {
   event.dataTransfer.setData("node", nodeType);
   event.dataTransfer.effectAllowed = 'copy'
 }
 
-watch(currentNodeEditingMode, (newNodeEditingMode) => {
-  if (newNodeEditingMode.type === "node")
-    currentNodeType.value = findNode(newNodeEditingMode.id).type;
-  else if (newNodeEditingMode.type === "edge")
-    currentNodeType.value = findEdge(newNodeEditingMode.id).type;
+watch(currentMode, (newMode) => {
+  currentObject.value = findNode(newMode.id) || findEdge(newMode.id);
+  console.log(currentObject);
 })
 </script>
 
 <template>
 <div class="side-bar">
   <div class="choose-bar">
-    <div class="component" :draggable="true"  v-for="(component, index) in components"
+    <div class="component" :draggable="true"  v-for="(node, index) in components.nodes"
          :key="index"
-         @dragstart="handleDragStart($event, component.type)">
-      <img class="component-img" :draggable="false" :src="component.img" :alt="component.title"/>
-      {{component.title}}
+         @dragstart="handleDragStart($event, node.type)">
+      <img class="component-img" :draggable="false" :src="node.img" :alt="node.title"/>
+      {{node.title}}
     </div>
   </div>
   <div class="settings-bar">
-    <div v-if="currentNodeEditingMode.mode === 'props'" class="settings-props">
+    <div v-if="currentMode.mode === 'props'" class="settings-props">
       <div class="settings-props-title">Параметры</div>
       <div class="settings-prop">
         <div class="props-title">Шлюз</div>
         <input class="gateway-input"/>
       </div>
     </div>
-    <div v-else-if="currentNodeEditingMode.mode === 'table'" class="settings-table">
+    <div v-else-if="currentMode.mode === 'table'" class="settings-table">
+      <div>
+
+      </div>
     </div>
   </div>
 </div>

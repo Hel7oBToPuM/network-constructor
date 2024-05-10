@@ -1,6 +1,6 @@
 <script setup>
-import {computed, onMounted, ref, watch, watchEffect} from "vue";
-import {Handle, Position, useNode, useVueFlow} from "@vue-flow/core";
+import {computed, onMounted, ref, watchEffect} from "vue";
+import {Handle, Position, useNode} from "@vue-flow/core";
 
 import NodeStatus from "@/components/NetworkConstructor/NodeStatus.vue";
 
@@ -8,59 +8,54 @@ const emit = defineEmits(["setting"]);
 const props = defineProps(["id"]);
 
 const {node, connectedEdges} = useNode();
-
 node.data = {
+  ip: Array.from({length: 4}, () => Math.floor(Math.random() * 254 + 1)).join('.'),
   table: {},
   focus: true
 }
+const {data} = node;
 
+// Обновление базовой таблицы маршруртизации по прямым подключениям
 watchEffect(() => {
   if (connectedEdges && connectedEdges.value.length > 0) {
+    // Создание новой таблицы маршуртизации прямых подключений
+    const newTable = {};
     for (const edge of connectedEdges.value) {
-      const { target, targetNode, source, sourceNode } = edge;
-      if (target === props.id) {
-
-      }
+      const {id, targetNode, sourceNode} = edge;
+      if (targetNode.id === props.id)
+        newTable[sourceNode.data.ip] = {gateway: sourceNode.data.ip, edge: id, hops: 1};
+      else if (sourceNode.id === props.id)
+        newTable[targetNode.data.ip] = {gateway: targetNode.data.ip, edge: id, hops: 1};
     }
-    console.log("Вотч", connectedEdges.value.length)
-  }
-  else
-    node.data.table.clear ;
+    // По разнице между таблицами обновляется старая
+    if (Object.keys(data.table).length === 0)
+      node.data.table = newTable;
+    else {
+      const oldGateways = Object.keys(data.table).map(key => data.table[key].gateway);
+      const newGateways = Object.keys(newTable).map(key => newTable[key].gateway);
+
+      for (const key in data.table)
+        if (!newGateways.includes(data.table[key].gateway))
+          delete data.table[key];
+
+      for (const key in newTable)
+        if (!oldGateways.includes(newTable[key].gateway))
+          data.table[key] = newTable[key];
+    }
+  } else
+    for (const key in data.table)
+      if (data.table.hasOwnProperty(key))
+        delete data.table[key];
 })
 
-const getRandomByte = () => Math.floor(Math.random() * 254 + 1);
-const ip = ref(`${getRandomByte()}.${getRandomByte()}.${getRandomByte()}.${getRandomByte()}`);
-watch(ip, (newIp) => {
-  node.data.ip = newIp;
-}, {immediate: true});
-watchEffect(() => {
-  if (ip.value !== node.data.ip)
-    ip.value = node.data.ip;
-})
-const ipInputStyle = computed(() => {
-  const maxWidthValue = ip.value.split('.').join('').split('1').join('').length * 10;
-  const minWidthValue = (ip.value.split('1').length * 6 + ip.value.split('.').length);
-  const value = maxWidthValue + minWidthValue;
-  return {
-    width: `${value === 0 ? 2 : value}px`
-  }
-});
 const validateIpInput = (event) => {
   const controlKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter']
   if (!controlKeys.includes(event.key) && event.key !== '.' && isNaN(parseInt(event.key, 10)) ||
-      event.key === '.' && event.target.value.split('.').length > 3 ||
-      event.target.value.split('.').join('').length > 11 && !controlKeys.includes(event.key) && event.key !== '.') {
+      event.key === '.' && event.target.textContent.split('.').length > 3 ||
+      event.target.textContent.split('.').join('').length > 11 && !controlKeys.includes(event.key) && event.key !== '.') {
     event.preventDefault();
   }
 };
-const ipFocusTimer = ref();
-const restartIpFocusTimer = (event) => {
-  if (ipFocusTimer.value === null)
-    clearTimeout(ipFocusTimer.value);
-  ipFocusTimer.value = setTimeout(() => {
-    event.target.blur();
-  }, 10000);
-}
 
 const borderColorStyle = computed(() => {
   return {
@@ -94,15 +89,18 @@ onMounted(() => {
         </button>
       </div>
     </div>
-    <div class="node-ip" @click="$event.target.querySelector('input').focus()">
-      <div class="node-ip-name" @click.stop>IP</div>
-      <input class="node-ip-editing nodrag"
-             :style="ipInputStyle"
-             v-model="ip"
-             @dragstart.prevent @click.stop
-             @keyup.enter.esc="$event.target.blur()"
-             @keydown="validateIpInput"
-             @input="restartIpFocusTimer"/>
+    <div class="node-ip nodrag" @click.stop="$event.target.querySelector('.node-ip-editing').focus()">
+      <div class="node-ip-name nodrag" @click.stop="$event.target.parentNode.querySelector('.node-ip-editing').focus()">
+        IP
+      </div>
+      <div
+          class="node-ip-editing nodrag"
+          contenteditable="true"
+          @dragstart.prevent @click.stop
+          @keyup.enter.esc="$event.target.blur()" @keydown="validateIpInput"
+          @input="data.ip = $event.target.textContent">
+        {{ data.ip }}
+      </div>
     </div>
     <NodeStatus>
 
@@ -111,7 +109,7 @@ onMounted(() => {
       <input class="node-send-address nodrag" placeholder="ПОЛУЧАТЕЛЬ"
              @dragstart.prevent
              @keyup.enter.esc="(event)=>{event.target.blur()}" @keydown="validateIpInput"/>
-      <button class="node-send-btn"><img src="/png/play.png" alt="Отправить"/></button>
+      <button class="node-send-btn" title="Отправить пакет"><img src="/png/play.png" alt="Отправить"/></button>
     </div>
   </div>
 </template>
@@ -184,10 +182,17 @@ onMounted(() => {
   align-items: center;
   background-color: white;
   border-radius: 14px;
-  overflow: hidden;
+  cursor: text;
 }
+
 .node-ip-name, .node-ip-editing {
   font-size: 16px;
+}
+
+.node-ip-editing {
+  outline: none;
+  min-width: 7px;
+  text-align: center;
 }
 
 .node-send {
@@ -205,5 +210,4 @@ onMounted(() => {
   text-align: center;
   border-radius: 14px;
 }
-
 </style>

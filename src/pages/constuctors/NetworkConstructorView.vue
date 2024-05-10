@@ -3,7 +3,7 @@ import {ref, watch} from "vue";
 import {VueFlow, useVueFlow} from "@vue-flow/core";
 import {Background} from '@vue-flow/background';
 
-import {v4 as uuid} from 'uuid';
+import {generate as uuid} from "short-uuid";
 
 import SideBar from "@/components/NetworkConstructor/TheSideBar.vue";
 import ComputerNode from "@/components/NetworkConstructor/ComputerNode.vue";
@@ -38,7 +38,7 @@ async function onDrop(event) {
       y: event.clientY - 200 / 2
     });
     const newNode = {
-      id: `${nodeType}_${uuid()}`,
+      id: uuid(),
       type: nodeType,
       position: position,
     };

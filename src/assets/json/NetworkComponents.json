@@ -1,12 +1,20 @@
-[
-  {
-    "type": "computer",
-    "title": "Компьютер",
-    "img": "/png/computer.png"
-  },
-  {
-    "type": "router",
-    "title": "Роутер",
-    "img": "/png/router.png"
-  }
-]
+{
+  "nodes": [
+    {
+      "type": "computer",
+      "title": "Компьютер",
+      "img": "/png/computer.png"
+    },
+    {
+      "type": "router",
+      "title": "Роутер",
+      "img": "/png/router.png"
+    }
+  ],
+  "edges": [
+    {
+      "name": "constructor",
+      "type": "smooth-step"
+    }
+  ]
+}
