@@ -1,0 +1,19 @@
+{
+  "gateway": {
+    "type": "object",
+    "title": "Шлюз",
+    "placeholder": "IP шлюза"
+  },
+  "routerMode": {
+    "type": "boolean",
+    "title": "Режим роутера"
+  },
+  "disabled": {
+    "type": "boolean",
+    "title": "Отключить"
+  },
+  "packageType": {
+    "type": "list",
+    "title": "Тип пакета"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "nodes": {
+    "computer": {
+      "title": "Компьютер",
+      "img": "/png/computer.png",
+      "props": {
+        "gateway": {"type": "object"}
+      }
+    },
+    "router": {
+      "title": "Роутер",
+      "img": "/png/router.png"
+    }
+  },
+  "edges": {
+    "constructor": {
+      "type": "smooth-step"
+    }
+  }
+}

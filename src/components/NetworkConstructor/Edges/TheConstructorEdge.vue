@@ -1,16 +1,15 @@
 <script setup>
+import {computed} from "vue";
 import {getSmoothStepPath, SmoothStepEdge, useEdge} from "@vue-flow/core";
-import {computed, onUnmounted} from "vue";
 
 const props = defineProps(["id", "sourceX", "sourceY", "targetX", "targetY",
   "sourcePosition", "targetPosition", "markerEnd", "style", "events"]);
-const emit = defineEmits(["setting"]);
+const emit = defineEmits(["selectSetting"]);
+
 
 const {edge} = useEdge();
-edge.style = {
-  strokeWidth: 2,
-  stroke: "black"
-}
+edge.style = {strokeWidth: 2, stroke: "black"}
+edge.data = {settingMode: "props", props: {source: edge.sourceNode.id, target: edge.targetNode.id}}
 
 const path = computed(() => getSmoothStepPath(props));
 
@@ -21,15 +20,7 @@ const edgeStrokeStyle = computed(() => {
   }
 })
 
-props.events.click(()=>{
-  emit("setting", {id: props.id, mode: "props"});
-})
-
-onUnmounted(() => {
-  emit("setting", {id: null, mode: null});
-})
-
-// console.log(edge);
+props.events.click(() => emit("selectSetting", props.id));
 </script>
 
 <template>
@@ -37,7 +28,7 @@ onUnmounted(() => {
                   :style="[style, edgeStrokeStyle]"
                   :path="path[0]"
                   :marker-end="markerEnd">
-  <div></div>
+    <div></div>
   </SmoothStepEdge>
 
 </template>

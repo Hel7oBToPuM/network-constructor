@@ -14,7 +14,7 @@
   gap: 0.5vw;
   justify-content: space-between;
   align-items: center;
-  font-size: 2vw;
+  font-size: 2.8vw;
   text-decoration: none;
   color: inherit;
 }
