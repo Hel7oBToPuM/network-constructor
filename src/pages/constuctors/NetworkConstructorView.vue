@@ -1,5 +1,5 @@
 <script setup>
-import {ref, watch} from "vue";
+import {nextTick, ref, watch} from "vue";
 import {VueFlow, useVueFlow, ConnectionLineType} from "@vue-flow/core";
 import {Background} from '@vue-flow/background';
 
@@ -11,10 +11,9 @@ import RouterNode from "@/components/NetworkConstructor/Nodes/TheRouterNode.vue"
 import ConstructorEdge from "@/components/NetworkConstructor/Edges/TheConstructorEdge.vue";
 
 const {
-  addNodes, findNode, getIncomers, getOutgoers, onNodesChange,
-  addEdges, findEdge, onEdgesChange,
-  onConnect,
-  screenToFlowCoordinate
+  addNodes, findNode, getIncomers, getOutgoers,
+  addEdges, findEdge,
+  screenToFlowCoordinate,
 } = useVueFlow();
 
 const selectedObjectId = ref("")
@@ -34,25 +33,46 @@ async function onDrop(event) {
       x: event.clientX - 200 / 2,
       y: event.clientY - 200 / 2
     });
+
+    const newNodeIp = Array.from({length: 4}, () => Math.floor(Math.random() * (254 - 1) + 1)).join('.');
     const newNode = {
       id: uuid(),
       type: nodeType,
       position: position,
+      data: {
+        focus: true,
+        ip: newNodeIp,
+        settingMode: "props",
+        table: {[newNodeIp]: {gateway: newNodeIp, edge: null, hops: 0}},
+        props: {},
+        status: {
+          packageDelivery: {enabled: false, data: {}},
+          requestRoutingTable: {enabled: false, data: {}},
+          successfulDelivery: {enabled: false, data: {}}
+        }
+      }
     };
     addNodes(newNode);
   }
 }
 
-onNodesChange((event) => {
-  if (event[0].type === "remove")
-    selectedObjectId.value = '';
-})
-onEdgesChange((event) => {
-  if (event[0].type === "remove")
-    selectedObjectId.value = '';
-})
+const onNodesChange = (events) => {
+  Object.values(events).forEach((event) => {
+    if (event.type === "add")
+      nextTick(selectedObjectId.value = event.item.id)
+    else if (event.type === "remove")
+      selectedObjectId.value = '';
+  });
+}
 
-onConnect((connection) => {
+const onEdgesChange = (events) => {
+  Object.values(events).forEach((event) => {
+    if (event.type === "remove")
+      selectedObjectId.value = '';
+  });
+}
+
+const onConnect = (connection) => {
   if (connection.source !== connection.target) {
     const isTargetConnectedToSource = [...getIncomers(connection.source), ...getOutgoers(connection.source)]
         .filter((node) => node.id === connection.target).length;
@@ -63,7 +83,8 @@ onConnect((connection) => {
       });
     }
   }
-})
+}
+
 </script>
 
 <template>
@@ -72,14 +93,17 @@ onConnect((connection) => {
              :deleteKeyCode="'Delete'" :multiSelectionKeyCode="null" :selectionKeyCode="null"
              :connectionLineType="ConnectionLineType.Straight" :connectionLineStyle="{strokeWidth: 2}"
              :selectNodesOnDrag="true"
+             :snapToGrid="true" :snapGrid="[15, 15]"
+             @connect="onConnect" @nodesChange="onNodesChange" @edgesChange="onEdgesChange"
              @dragover.prevent="$event.dataTransfer.dropEffect = $event.dataTransfer ? 'copy' : 'none'"
              @drop="onDrop">
-      <Background :size="2" :gap="20" pattern-color="#BDBDBD"/>
+      <Background :size="2" :gap="15" pattern-color="#BDBDBD"/>
       <template #node-computer="computerNodeProps">
         <ComputerNode @selectSetting="selectedObjectId = $event" v-bind="computerNodeProps"/>
       </template>
       <template #node-router="routerNodeProps">
-        <RouterNode @selectSetting="selectedObjectId = $event" v-bind="routerNodeProps"/>
+        <RouterNode @selectSetting="selectedObjectId = $event"
+                    v-bind="routerNodeProps"/>
       </template>
       <template #edge-constructor="constructorEdgeProps">
         <ConstructorEdge @selectSetting="selectedObjectId = $event" v-bind="constructorEdgeProps"/>

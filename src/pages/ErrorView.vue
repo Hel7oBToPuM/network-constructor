@@ -3,10 +3,10 @@
 <template>
   <main>
     <img class="nyan" src="/gif/nyanCat.gif" alt="Нян-кэт"/>
-      <div>
-        <h1>404</h1>
-        <p>Страница не найдена</p>
-      </div>
+    <div>
+      <h1>404</h1>
+      <p>Страница не найдена</p>
+    </div>
     <img class="nyan-reverse" src="/gif/nyanCat.gif" alt="Нян-кэт"/>
   </main>
 </template>

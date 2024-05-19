@@ -1,11 +1,10 @@
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter } from 'vue-router';
+import {ref, watch} from "vue";
+import {useRouter} from 'vue-router';
 
 import Level from "@/components/LevelsItem.vue";
 
 import LevelsData from '@/assets/json/OSI.json';
-
 
 const padding = 8;
 const height = 100 - 2 * padding - 12;

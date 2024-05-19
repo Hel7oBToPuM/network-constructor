@@ -4,7 +4,7 @@ defineEmits(['setting'])
 </script>
 
 <template>
-  <div class="head">
+  <div class="node-head">
     <img class="node-img" :src="`/png/${nodeType}.png`" alt="Компьютер"/>
     <div class="btn-container">
       <button class="btn-props" title="Параметры"
@@ -20,7 +20,7 @@ defineEmits(['setting'])
 </template>
 
 <style scoped>
-.head {
+.node-head {
   width: 100%;
   display: flex;
   flex-direction: row;

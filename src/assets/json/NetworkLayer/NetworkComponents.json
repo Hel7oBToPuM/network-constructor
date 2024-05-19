@@ -4,12 +4,18 @@
       "title": "Компьютер",
       "img": "/png/computer.png",
       "props": {
-        "gateway": {"type": "object"}
+        "gateway": {"type": "object"},
+        "routerMode": {"type": "boolean"},
+        "state": {"type": "boolean"}
       }
     },
     "router": {
       "title": "Роутер",
-      "img": "/png/router.png"
+      "img": "/png/router.png",
+      "props": {
+        "gateway": {"type": "object"},
+        "state": {"type": "boolean"}
+      }
     }
   },
   "edges": {

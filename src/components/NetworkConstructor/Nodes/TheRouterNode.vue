@@ -1,41 +1,55 @@
 <script setup>
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, watch} from "vue";
 import {Handle, Position, useNode} from "@vue-flow/core";
 
 import NodeHead from "@/components/NetworkConstructor/Nodes/NodeItems/TheNodeHead.vue";
 import NodeIP from "@/components/NetworkConstructor/Nodes/NodeItems/TheNodeIP.vue";
 import NodeStatus from "@/components/NetworkConstructor/Nodes/NodeItems/TheNodeStatus.vue";
 
-import {watchNewConnections} from "@/components/NetworkConstructor/Nodes/NodeUtils.js";
+import {sortRoutingTableByHops, useRIPv1Timeout} from "@/components/NetworkConstructor/Nodes/NodeUtils.js";
+import {useWindowFocus} from "@vueuse/core";
 
 const props = defineProps(["id"]);
-const emit = defineEmits(["selectSetting"]);
+defineEmits(["selectSetting"]);
 
 const {node, connectedEdges} = useNode();
-node.data = {
-  ip: Array.from({length: 4}, () => Math.floor(Math.random() * 254 + 1)).join('.'),
-  settingMode: "props",
-  table: {},
-  props: {
-    gateway: {enabled: false, value: ""},
-    disabled: {enabled: false}
-  },
-  focus: true
-}
 const {data} = node;
-
-watch(data, () => {
-  console.log("Изменен Роутер:", node.id, "Значение:", data);
-})
-
-watchNewConnections(connectedEdges, props.id, data);
+data.props = {
+  gateway: {enabled: false, value: ""},
+  state: {enabled: false},
+}
 
 const borderColorStyle = computed(() => {
   return {borderColor: node.data.focus ? "#eda1e7" : "black"}
 })
 
-onMounted(() => {
-  emit('selectSetting', props.id);
+const {start: startRIP, stop: stopRIP, state: stateRIP} = useRIPv1Timeout(connectedEdges, props.id, data);
+watch(connectedEdges, (edges) => {
+  if (edges && edges.length > 0 && stateRIP() === false)
+    startRIP();
+  else if (edges.length === 0 && stateRIP() === true) {
+    stopRIP();
+    Object.keys(data.table).forEach((dest_ip) => {
+      if (dest_ip !== data.ip)
+        delete data.table[dest_ip];
+    })
+  }
+});
+
+const windowFocused = useWindowFocus();
+watch(windowFocused, (isFocused) => {
+  if (connectedEdges.value.length > 0) {
+    if (isFocused && stateRIP() === false)
+      startRIP();
+    else if (!isFocused && stateRIP() === true)
+      stop();
+  }
+})
+
+watch(() => data.ip, (newIp, oldIp) => {
+  delete data.table[oldIp];
+  data.table[newIp] = {gateway: newIp, edge: null, hops: 0};
+  sortRoutingTableByHops(data);
 })
 </script>
 
@@ -49,7 +63,7 @@ onMounted(() => {
     <NodeHead :nodeType="node.type"
               @setting="(mode) => {$emit('selectSetting', id); data.settingMode=mode}"/>
     <NodeIP :ip="data.ip" @update:ip="data.ip = $event"/>
-    <NodeStatus/>
+    <NodeStatus :status="data.status"/>
   </div>
 </template>
 

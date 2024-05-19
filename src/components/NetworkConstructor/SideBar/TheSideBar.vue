@@ -68,10 +68,6 @@ watch(() => props.curObjId, (newId) => {
 }
 
 .choose-bar {
-  height: fit-content;
-}
-
-.choose-bar {
   padding: 6% 0;
   display: flex;
   flex-wrap: wrap;

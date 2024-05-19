@@ -1,45 +1,63 @@
 <script setup>
-import {computed, watch, watchEffect, onMounted} from "vue";
-import {Handle, Position, useNode} from "@vue-flow/core";
+import {computed, watch} from "vue";
+import {Handle, Position, useNode, useVueFlow} from "@vue-flow/core";
 
 import NodeHead from "@/components/NetworkConstructor/Nodes/NodeItems/TheNodeHead.vue";
 import NodeIP from "@/components/NetworkConstructor/Nodes/NodeItems/TheNodeIP.vue";
 import NodeStatus from "@/components/NetworkConstructor/Nodes/NodeItems/TheNodeStatus.vue";
 import NodeSender from "@/components/NetworkConstructor/Nodes/NodeItems/TheNodeSender.vue";
 
-import {watchNewConnections} from "@/components/NetworkConstructor/Nodes/NodeUtils.js";
+import {useRIPv1Timeout, sendPackage, sortRoutingTableByHops} from "@/components/NetworkConstructor/Nodes/NodeUtils.js";
+import {useWindowFocus} from "@vueuse/core";
 
 const props = defineProps(["id"]);
-const emit = defineEmits(["selectSetting"]);
+defineEmits(["selectSetting"]);
+
+const {id: vueFlowId} = useVueFlow();
 
 const {node, connectedEdges} = useNode();
-node.data = {
-  ip: Array.from({length: 4}, () => Math.floor(Math.random() * 254 + 1)).join('.'),
-  settingMode: "props",
-  table: {},
-  props: {
-    gateway: {enabled: false, value: ""},
-    routerMode: {enabled: false},
-    disabled: {enabled: false},
-    packageType: "none"
-  },
-  focus: true
-}
 const {data} = node;
-
-watch(data, () => {
-  console.log("Изменен Компьютер:", props.id, "Значение:", data);
-})
-
-watchNewConnections(connectedEdges, props.id, data);
+data.props = {
+  gateway: {enabled: false, value: ""},
+  routerMode: {enabled: false},
+  state: {enabled: false},
+  packageType: "none",
+};
 
 const borderColorStyle = computed(() => {
   return {borderColor: data.focus ? "#eda1e7" : "black"}
 })
 
-onMounted(() => {
-  emit('selectSetting', props.id);
+const {start: startRIP, stop: stopRIP, state: stateRIP} = useRIPv1Timeout(connectedEdges, props.id, data);
+watch(connectedEdges, (edges) => {
+  if (edges && edges.length > 0 && stateRIP() === false)
+    startRIP();
+  else if (edges.length === 0 && stateRIP() === true) {
+    stopRIP();
+    Object.keys(data.table).forEach((dest_ip) => {
+      if (dest_ip !== data.ip)
+        delete data.table[dest_ip];
+    })
+  }
+});
+
+const windowFocused = useWindowFocus();
+watch(windowFocused, (isFocused) => {
+  if (connectedEdges.value.length > 0) {
+    if (isFocused && stateRIP() === false)
+      startRIP();
+    else if (!isFocused && stateRIP() === true)
+      stop();
+  }
 })
+
+watch(() => data.ip, (newIp, oldIp) => {
+  delete data.table[oldIp];
+  data.table[newIp] = {gateway: newIp, edge: null, hops: 0};
+  sortRoutingTableByHops(data);
+})
+
+const {start: startSend} = sendPackage(vueFlowId);
 </script>
 
 <template>
@@ -52,8 +70,8 @@ onMounted(() => {
     <NodeHead :nodeType="node.type"
               @setting="(mode) => {$emit('selectSetting', id); data.settingMode=mode}"/>
     <NodeIP :ip="data.ip" @update:ip="data.ip = $event"/>
-    <NodeStatus/>
-    <NodeSender/>
+    <NodeSender :disabled="data?.sendingPackage" @sendPackage="startSend($event, node);"/>
+    <NodeStatus :status="data.status"/>
   </div>
 </template>
 

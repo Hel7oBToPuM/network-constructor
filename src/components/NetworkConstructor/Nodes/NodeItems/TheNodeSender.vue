@@ -1,4 +1,13 @@
 <script setup>
+import {ref} from "vue";
+
+defineProps(['disabled']);
+defineEmits(["sendPackage"]);
+
+const sendIp = ref("");
+const inputRef = ref();
+const btnRef = ref();
+
 const validateIpInput = (event) => {
   const controlKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter']
   if (!controlKeys.includes(event.key) && event.key !== '.' && isNaN(parseInt(event.key, 10)) ||
@@ -11,12 +20,16 @@ const validateIpInput = (event) => {
 
 <template>
   <div class="sender-container">
-    <input class="ip nodrag"
-           placeholder="ПОЛУЧАТЕЛЬ"
-           @dragstart.prevent
-           @keyup.enter.esc="$event.target.blur()"
-           @keydown="validateIpInput"/>
-    <button class="send-btn" title="Отправить пакет">
+    <input class="ip-input nodrag" placeholder="ПОЛУЧАТЕЛЬ"
+           ref="inputRef" @dragstart.prevent
+           :disabled="disabled"
+           @keyup.enter.esc="$event.target.blur()" @keydown="validateIpInput"
+           v-model="sendIp"/>
+    <button class="send-btn"
+            ref="btnRef"
+            :title="disabled ? 'Пакет отправлен . . .' : 'Отправить пакет'"
+            :disabled="disabled"
+            @click.stop="() => {if (!disabled) $emit('sendPackage', sendIp)}">
       <img src="/png/play.png" alt="Отправить"/>
     </button>
   </div>
@@ -32,22 +45,32 @@ const validateIpInput = (event) => {
   gap: 9px;
 }
 
-.ip {
+.ip-input {
   width: 134px;
   font-size: 16px;
   text-align: center;
   border-radius: 14px;
 }
 
+.ip-input:disabled {
+  color: #B354A8;
+  background-color: white;
+}
+
 .send-btn {
   width: 28px;
   line-height: 0;
   cursor: pointer;
-  transition: filter 0.3s ease-in-out;
+  transition: filter 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .send-btn:hover {
   filter: invert(75%) sepia(54%) saturate(434%) hue-rotate(273deg) brightness(98%) contrast(89%);
+}
+
+.send-btn:disabled, .send-btn:disabled:hover {
+  opacity: 0.5;
+  filter: none;
 }
 
 .send-btn img {
