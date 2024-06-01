@@ -9,7 +9,18 @@ const inputRef = ref();
 const btnRef = ref();
 
 const validateIpInput = (event) => {
-  const controlKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter']
+  const controlKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Escape', 'Enter'];
+
+  if (event.clipboardData) {
+    const paste = event.clipboardData.getData('text');
+    if (sendIp.value.length + paste.length >= 16)
+      event.preventDefault();
+    return;
+  }
+
+  if (controlKeys.includes(event.key) || ((event.ctrlKey || event.metaKey)  && (event.key === 'c' || event.key === 'v')))
+    return;
+
   if (!controlKeys.includes(event.key) && event.key !== '.' && isNaN(parseInt(event.key, 10)) ||
       event.key === '.' && event.target.textContent.split('.').length > 3 ||
       event.target.textContent.split('.').join('').length > 11 && !controlKeys.includes(event.key) && event.key !== '.') {
@@ -24,6 +35,7 @@ const validateIpInput = (event) => {
            ref="inputRef" @dragstart.prevent
            :disabled="disabled"
            @keyup.enter.esc="$event.target.blur()" @keydown="validateIpInput"
+           @paste="validateIpInput"
            v-model="sendIp"/>
     <button class="send-btn"
             ref="btnRef"

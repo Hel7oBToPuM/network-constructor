@@ -1,5 +1,5 @@
 <script setup>
-import {nextTick, ref, watch} from "vue";
+import {nextTick, onBeforeMount, onUnmounted, ref, watch} from "vue";
 import {VueFlow, useVueFlow, ConnectionLineType} from "@vue-flow/core";
 import {Background} from '@vue-flow/background';
 
@@ -14,6 +14,7 @@ const {
   addNodes, findNode, getIncomers, getOutgoers,
   addEdges, findEdge,
   screenToFlowCoordinate,
+  toObject, fromObject
 } = useVueFlow();
 
 const selectedObjectId = ref("")
@@ -42,13 +43,15 @@ async function onDrop(event) {
       data: {
         focus: true,
         ip: newNodeIp,
-        settingMode: "props",
         table: {[newNodeIp]: {gateway: newNodeIp, edge: null, hops: 0}},
         props: {},
+        settingMode: "props",
+        isSendingPackage: false,
         status: {
           packageDelivery: {enabled: false, data: {}},
           requestRoutingTable: {enabled: false, data: {}},
-          successfulDelivery: {enabled: false, data: {}}
+          successfulDelivery: {enabled: false, data: {}},
+          errorSendingPackage: {enabled: false, data: {}}
         }
       }
     };
@@ -85,6 +88,31 @@ const onConnect = (connection) => {
   }
 }
 
+function beforeWindowUnload() {
+  const flow = toObject();
+  for (const node of flow.nodes) {
+    node.data.isSendingPackage = false;
+    node.data.focus = false;
+    for (const key in node.data.status)
+      node.data.status[key].enabled = false;
+  }
+  for (const edge of flow.edges)
+    for (const key in edge.data.animation)
+      edge.data.animation[key] = false;
+
+  localStorage.setItem('networkConstructor', JSON.stringify(flow));
+}
+
+onBeforeMount(() => {
+  const flow = JSON.parse(localStorage.getItem('networkConstructor'));
+  if (flow)
+    fromObject(flow);
+  window.addEventListener('beforeunload', beforeWindowUnload);
+});
+
+onUnmounted(() => {
+  beforeWindowUnload()
+})
 </script>
 
 <template>

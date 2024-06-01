@@ -17,54 +17,88 @@ export const nodeStatuses = {
     "successfulDelivery": {
         img: "/gif/successfulDelivery.gif",
         text: "Пакет доставлен"
+    },
+    "errorSendingPackage": {
+        img: "/gif/errorSendingPackage.gif",
+        text: "Пакет потерян"
     }
 }
 
 export function sendPackage() {
     let destination = null;
     let startNode = null;
+    let TTL = null;
     const {findEdge} = useVueFlow();
 
-    function start(ip, node) {
+    function start(ip, node, timeToLive = 32) {
         destination = ip;
         startNode = node;
-        startNode.data.sendingPackage = true;
+        startNode.data.isSendingPackage = true;
+        TTL = timeToLive;
         processDelivery(startNode);
+    }
+
+    function setError() {
+        startNode.data.isSendingPackage = false;
+        startNode.data.status.errorSendingPackage.enabled = true;
+        setTimeout(() => startNode.data.status.errorSendingPackage.enabled = false, 2000);
+    }
+
+    function tryToStartDelivery (fromNode, toNode, edge, animation, interval) {
+        const timer = setInterval(() => {
+            if (!edge.data.animation[animation]) {
+                clearInterval(timer);
+
+                fromNode.data.status.packageDelivery.enabled = edge.data.animation[animation] = true;
+
+                setTimeout(() => {
+                    if (toNode)
+                        if (toNode.data.ip === destination) {
+                            startNode.data.status.successfulDelivery.enabled = true;
+                            setTimeout(() =>
+                                startNode.data.status.successfulDelivery.enabled = startNode.data.isSendingPackage = false,
+                                2000);
+                        }
+                        else if (TTL === 0)
+                            setError();
+                        else if (toNode.type === 'computer' && !toNode.data.props?.routerMode.enabled)
+                            setError();
+                        else {
+                            --TTL;
+                            processDelivery(toNode);
+                        }
+                    else
+                        setError();
+
+                    fromNode.data.status.packageDelivery.enabled = false;
+                }, 2000);
+            }
+        }, interval);
     }
 
     function processDelivery(fromNode) {
         if (fromNode) {
-            const edge = findEdge(fromNode.data.table[destination]?.edge);
+            const edge = findEdge(fromNode.data.
+                table[fromNode.data.props.gateway.enabled ? fromNode.data.props.gateway.value : destination]?.edge);
+
             if (edge) {
                 const toNode = fromNode.id === edge.targetNode.id ? edge.sourceNode : edge.targetNode;
                 const animation = fromNode.id === edge.targetNode.id ? 'packageToSource' : 'packageToTarget';
 
-                const tryToStartDelivery = setInterval(() => {
-                    if (!edge.data.animation[animation]) {
-                        clearInterval(tryToStartDelivery);
-                        fromNode.data.status.packageDelivery.enabled = true;
-                        edge.data.animation[animation] = true
-                        setTimeout(() => {
-                            fromNode.data.status.packageDelivery.enabled = false;
-                            if (toNode) {
-                                if (toNode.data.ip === destination) {
-                                    startNode.data.sendingPackage = false;
-                                    startNode.data.status.successfulDelivery.enabled = true;
-                                    setTimeout(() =>
-                                            startNode.data.status.successfulDelivery.enabled = false,
-                                        2000);
-                                } else
-                                    processDelivery(toNode);
-                            }
-                        }, 2000);
-                    }
-                }, 1000);
-            } else {
-                startNode.data.sendingPackage = false;
-                //fromNode.data.status = {value: "errorSendingPackage", data: {error: "gatewayNotFound"}};
+                tryToStartDelivery(fromNode, toNode, edge, animation, 1000);
             }
-
+            else if (fromNode.data.table[destination]?.gateway === destination &&
+                    fromNode.data.table[destination]?.gateway === fromNode.data.ip) {
+                startNode.data.status.successfulDelivery.enabled = true;
+                setTimeout(() =>
+                        startNode.data.status.successfulDelivery.enabled = startNode.data.isSendingPackage = false,
+                    2000);
+            }
+            else
+                setError()
         }
+        else
+            setError()
     }
 
     return {start};
@@ -116,14 +150,19 @@ export function useRIPv1Timeout(connectedEdges, nodeId, nodeData) {
                 Object.entries(resNodeData.table).forEach(([destIp, resEntry]) => {
                     if (resEntry.gateway !== reqNodeData.ip) {
                         const existEntry = incomingChanges[destIp] || reqNodeData.table[destIp];
-                        if (existEntry && existEntry.hops > resEntry.hops + 1 || !existEntry)
+
+                        if (existEntry
+                            && ((resEntry.hops + 1 < (existEntry === 'updateLifeCycle' ? reqNodeData.table[destIp].hops : existEntry.hops))
+                            || resNodeData.ip === existEntry?.gateway)
+                            || !existEntry) {
                             incomingChanges[destIp] = {
                                 gateway: resNodeData.ip,
                                 edge: edgeId,
                                 lifeCycle: 6,
                                 hops: resEntry.hops + 1
                             };
-                        else
+                        }
+                        else if (reqNodeData.table[destIp].gateway === resNodeData.ip)
                             incomingChanges[destIp] = 'updateLifeCycle';
                     }
                 })
@@ -132,7 +171,7 @@ export function useRIPv1Timeout(connectedEdges, nodeId, nodeData) {
             }
         }
 
-        if (Object.keys(incomingChanges).length !== 0) {
+        if (Object.keys(incomingChanges).length !== 0)
             Object.entries(incomingChanges).map(([destIp, entry]) => {
                 if (entry === 'updateLifeCycle')
                     reqNodeData.table[destIp].lifeCycle = 6;
@@ -140,13 +179,12 @@ export function useRIPv1Timeout(connectedEdges, nodeId, nodeData) {
                     reqNodeData.table[destIp] = entry;
             })
 
-        }
-
         Object.keys(reqNodeData.table).forEach((key) => {
             if (!incomingChanges.hasOwnProperty(key))
                 if (--reqNodeData.table[key].lifeCycle === 0)
                     delete reqNodeData.table[key];
         })
+
         sortRoutingTableByHops(reqNodeData);
 
         setTimeout(() => reqNodeData.status.requestRoutingTable.enabled = false, 2000);

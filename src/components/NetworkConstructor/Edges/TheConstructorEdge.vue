@@ -29,8 +29,7 @@ edge.data = {
     tableToTarget: false,
     packageToSource: false,
     packageToTarget: false,
-  },
-  sendPackage: {}
+  }
 }
 const {data} = edge;
 

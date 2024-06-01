@@ -34,7 +34,7 @@ watch(connectedEdges, (edges) => {
         delete data.table[dest_ip];
     })
   }
-});
+}, {immediate: true});
 
 const windowFocused = useWindowFocus();
 watch(windowFocused, (isFocused) => {
@@ -42,7 +42,7 @@ watch(windowFocused, (isFocused) => {
     if (isFocused && stateRIP() === false)
       startRIP();
     else if (!isFocused && stateRIP() === true)
-      stop();
+      stopRIP();
   }
 })
 

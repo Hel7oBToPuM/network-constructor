@@ -6,7 +6,12 @@ const props = defineProps(["status"])
 
 <template>
   <template v-for="(value, key, index) in status" :key="index">
-    <div class="node-status-container" :class="[key]" v-show="status[key].enabled">
+    <div class="node-status-container"
+         :style="(() => {
+            if (key === 'requestRoutingTable') return {top: value.enabled ? '-42px' : 0}
+            else return {bottom: value.enabled ? '-42px' : 0}
+         })()"
+         :class="[key]">
       <img class="node-status-img" :src="nodeStatuses[key]?.img" alt="Процесс"/>
       <div class="node-status-text">{{ nodeStatuses[key]?.text }}</div>
       <button class="node-status-details-btn">
@@ -17,16 +22,9 @@ const props = defineProps(["status"])
 </template>
 
 <style scoped>
-.requestRoutingTable {
-  top: -42px;
-}
-
-.packageDelivery, .successfulDelivery {
-  bottom: -42px;
-}
-
 .node-status-container {
   position: absolute;
+  z-index: -1;
   height: 28px;
   padding: 0 5px;
   display: flex;
@@ -36,6 +34,7 @@ const props = defineProps(["status"])
   background-color: rgba(244, 243, 244, 0.8);
   border-radius: 14px;
   overflow: hidden;
+  transition: bottom 0.3s ease-in-out, top 0.3s ease-in-out;
 }
 
 .node-status-img, .node-status-details-img:hover {
@@ -57,5 +56,4 @@ const props = defineProps(["status"])
   line-height: 0;
   cursor: pointer;
 }
-
 </style>

@@ -4,7 +4,7 @@
     "props": {
       "id": "application-layer",
       "color": "#efc3e6",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "description": "Прикладной уровень является самым высоким уровнем модели OSI и непосредственно взаимодействует с конечными пользовательскими приложениями. Он обеспечивает услуги, необходимые для различных приложений, таких как электронная почта, передача файлов и доступ к базам данных. Этот уровень управляет процессами, связанными с пользовательским доступом к сетевым ресурсам и данным.",
       "materials": {}
     }
   },
@@ -13,7 +13,7 @@
     "props": {
       "id": "presentation-layer",
       "color": "#f1b5d9",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "description": " Уровень представления отвечает за преобразование данных между форматом, используемым приложением, и форматом, стандартным для передачи в сети. Он выполняет функции кодирования, декодирования, шифрования, дешифрования, сжатия и распаковки данных. Это позволяет различным системам обмениваться данными в универсальном формате.",
       "materials": {}
     }
   },
@@ -22,7 +22,7 @@
     "props": {
       "id": "session-layer",
       "color": "#f0a6cb",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "description": "Сеансовый уровень управляет установкой, ведением и завершением сеансов связи между приложениями. Он контролирует взаимодействие двух коммуникационных процессов, обеспечивает синхронизацию данных и управление передачей. Этот уровень также отвечает за возобновление сеансов и восстановление связи после сбоев.",
       "materials": {}
     }
   },
@@ -31,7 +31,7 @@
     "props": {
       "id": "transport-layer",
       "color": "#c697c1",
-      "description": "Транспортный уровень, или уровень 4 модели OSI, управляет сетевым трафиком между хостами и конечными системами, гарантируя полный поток данных. Объем, назначение и скорость передачи данных контролируются протоколами транспортного уровня. Пакеты данных должны быть получены и отправлены на соответствующую машину сетевым уровнем. После этого транспортный уровень принимает пакеты, сортирует их и ищет ошибки. Затем он направляет их на сеансовый уровень соответствующей компьютерной программы.",
+      "description": "Транспортный уровень управляет сетевым трафиком между хостами и конечными системами, гарантируя полный поток данных. Объем, назначение и скорость передачи данных контролируются протоколами транспортного уровня. Пакеты данных должны быть получены и отправлены на соответствующую машину сетевым уровнем. После этого транспортный уровень принимает пакеты, сортирует их и ищет ошибки. Затем он направляет их на сеансовый уровень соответствующей компьютерной программы.",
       "materials": {
         "Конструктор" : "constructor"
       }
@@ -42,7 +42,7 @@
     "props": {
       "id": "network-layer",
       "color": "#9e80a6",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "description": "Сетевой уровень отвечает за определение пути и маршрутизацию пакетов данных через сеть. Он управляет логическими адресами и обеспечивает маршрутизацию данных между различными сетями и узлами. Сетевой уровень также обеспечивает управление потоками, распределение ресурсов и обработку сообщений об ошибках.",
       "materials": {
         "Конструктор" : "constructor"
       }
@@ -53,7 +53,7 @@
     "props": {
       "id": "datalink-layer",
       "color": "#75678a",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "description": "Канальный уровень обеспечивает надежную передачу данных через физический канал. Он управляет физической адресацией, контролем доступа к каналу, и обнаружением и коррекцией ошибок. Этот уровень разбивает данные на фреймы и отвечает за физическую доставку данных.",
       "materials": {
         "Конструктор" : "constructor"
       }
@@ -64,7 +64,7 @@
     "props": {
       "id": "physical-layer",
       "color": "#4e445c",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "description": "Физический уровень отвечает за передачу необработанных битов данных по физическим средствам, таким как кабели, радиоволны и оптические волоконные линзы. Он определяет механические, электрические, функциональные и процедурные характеристики, необходимые для активации, поддержания и деактивации физического соединения.",
       "materials": {}
     }
   }

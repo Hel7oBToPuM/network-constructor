@@ -39,7 +39,7 @@ watch(connectedEdges, (edges) => {
         delete data.table[dest_ip];
     })
   }
-});
+}, {immediate: true});
 
 const windowFocused = useWindowFocus();
 watch(windowFocused, (isFocused) => {
@@ -47,7 +47,7 @@ watch(windowFocused, (isFocused) => {
     if (isFocused && stateRIP() === false)
       startRIP();
     else if (!isFocused && stateRIP() === true)
-      stop();
+      stopRIP();
   }
 })
 
@@ -70,7 +70,7 @@ const {start: startSend} = sendPackage(vueFlowId);
     <NodeHead :nodeType="node.type"
               @setting="(mode) => {$emit('selectSetting', id); data.settingMode=mode}"/>
     <NodeIP :ip="data.ip" @update:ip="data.ip = $event"/>
-    <NodeSender :disabled="data?.sendingPackage" @sendPackage="startSend($event, node);"/>
+    <NodeSender :disabled="data.isSendingPackage" @sendPackage="startSend($event, node);"/>
     <NodeStatus :status="data.status"/>
   </div>
 </template>
